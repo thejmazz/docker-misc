@@ -166,10 +166,6 @@ RUN rm /home/biodocker/Trimmomatic-0.36.zip
 
 # Change user to back to biodocker
 USER biodocker
-
-# Download repo
-RUN git clone https://github.com/bionode/gsoc16 /home/biodocker/gsoc16
-WORKDIR /home/biodocker/gsoc16/pipelines
-RUN ./get-trimmomatic.sh
+WORKDIR /data
 
 CMD ["bash"]
