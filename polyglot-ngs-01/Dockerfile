@@ -164,6 +164,14 @@ RUN wget http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/Trimmoma
 RUN unzip /home/biodocker/Trimmomatic-0.36.zip -d /home/biodocker
 RUN rm /home/biodocker/Trimmomatic-0.36.zip
 
+# === wgsim ===
+RUN git clone https://github.com/lh3/wgsim && \
+    cd wgsim && \
+    gcc -g -O2 -Wall -o wgsim wgsim.c -lz -lm && \
+    cp wgsim /usr/local/bin/wgsim && \
+    chmod +x /usr/local/bin/wgsim && \
+    cd ../ && rm -rf wgsim
+
 # Change user to back to biodocker
 USER biodocker
 WORKDIR /data
