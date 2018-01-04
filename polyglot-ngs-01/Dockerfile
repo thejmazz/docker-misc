@@ -2,7 +2,7 @@
 # also includes snakemake, nextflow, trimmomatic, kmc, khmer
 
 # Set the base image to Ubuntu
-FROM biodckr/biodocker
+FROM biocontainers/biocontainers
 
 # https://github.com/nodejs/docker-node/blob/fdcbbd6445c70290c50396cba2b2b67357a00629/4.4/Dockerfile
 ################## bionode-ncbi ######################
