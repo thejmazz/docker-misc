@@ -27,21 +27,24 @@ ENV NPM_CONFIG_LOGLEVEL info
 ENV NODE_VERSION 8.9.4
 
 RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
-  && curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc" \
-  && gpg --batch --decrypt --output SHASUMS256.txt SHASUMS256.txt.asc \
-  && grep " node-v$NODE_VERSION-linux-x64.tar.xz\$" SHASUMS256.txt | sha256sum -c - \
+  # && curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc" \
+  # && gpg --batch --decrypt --output SHASUMS256.txt SHASUMS256.txt.asc \
+  # && grep " node-v$NODE_VERSION-linux-x64.tar.xz\$" SHASUMS256.txt | sha256sum -c - \
   && tar -xJf "node-v$NODE_VERSION-linux-x64.tar.xz" -C /usr/local --strip-components=1 \
-  && rm "node-v$NODE_VERSION-linux-x64.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt
+  && rm "node-v$NODE_VERSION-linux-x64.tar.xz"
 
 RUN npm install -g bionode-ncbi
+
+RUN git clone https://github.com/bionode/bionode-watermill.git /home/biodocker/bionode-watermill
+RUN cd /home/biodocker/bionode-watermill && npm install
 
 # https://github.com/inutano/docker-misc/blob/master/sra-toolkit/Dockerfile
 ################## sra-toolkit ######################
 
 WORKDIR /src
-RUN wget "http://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/2.4.4/sratoolkit.2.4.4-ubuntu64.tar.gz" && \
-    tar zxfv sratoolkit.2.4.4-ubuntu64.tar.gz && \
-    cp -r sratoolkit.2.4.4-ubuntu64/bin/* /usr/bin
+RUN wget "http://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/2.8.2-1/sratoolkit.2.8.2-1-ubuntu64.tar.gz" && \
+    tar zxfv sratoolkit.2.8.2-1-ubuntu64.tar.gz && \
+    cp -r sratoolkit.2.8.2-1-ubuntu64/bin/* /usr/bin
 
 # https://github.com/BioDocker/sandbox/blob/master/htslib/1.2.1/Dockerfile
 ################## htslib ######################
@@ -134,10 +137,16 @@ RUN wget $URL/$ZIP -O $DST/$ZIP && \
 
 # === pip3, snakemake ===
 USER root
+
+RUN apt-get update && \
+  apt-get install -y \
+  python3 python3-pip && \
+  rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
 ADD https://raw.githubusercontent.com/pypa/pip/701a80f451a62aadf4eeb21f371b45424821582b/contrib/get-pip.py /root/get-pip.py
-RUN python3.4 /root/get-pip.py
-RUN pip3.4 install -U "setuptools==15.1"
-RUN pip3.4 install -U "pip==6.1.1"
+RUN python3 /root/get-pip.py
+RUN pip3 install -U "setuptools==15.1"
+RUN pip3 install -U "pip==6.1.1"
 RUN pip3 install snakemake
 
 # === nextflow ===
